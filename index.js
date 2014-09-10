@@ -14,70 +14,48 @@ module.exports = function createdAt(schema, options) {
     expiresPath : 'tokenExpires',
     setMethod   : 'setToken',
     getByMethod : 'getByToken',
-    resetMethod : 'setToken',
+    resetMethod : 'resetToken',
     tokenLength : 20,
-    expire      : 1 * 60 * 60 * 1000
+    expire      : 1 * 60 * 60 * 1000 // 1 hour
   });
 
-
+  // Set the path options
   schema
     .path(options.tokenPath, String)
     .path(options.expiresPath, Number);
 
-
+  // This is the setToken method.
+  //
+  // It creates a token made from random bytes using the crypto module. Could
+  // be convinced to use another module instead
   schema.method(options.setMethod, function (cb) {
     var model = this;
-    var token;
-    var createToken = crypto.randomBytesAsync(options.tokenLength)
+    return crypto.randomBytesAsync(options.tokenLength / 2)
       .then(function (buf) {
-        token = buf.toString('hex');
-        var set = {};
-        set[options.tokenPath] = token;
-        set[options.expiresPath] = Date.now() + options.expire;
-        return model.update({$set: set}).exec();
+        model.set(options.tokenPath, buf.toString('hex'));
+        model.set(options.expiresPath, Date.now() + options.expire);
+        return saveAsync(model);
       })
-      .then(function () {
-        return token;
-      });
-
-    if (typeof cb === 'function') {
-      createToken.then(function (token) {
-        cb(null, token);
-      }, cb);
-    } else {
-      return createToken;
-    }
+      .nodeify(cb);
   });
 
-
+  // This is the resetToken method.
+  //
+  // It resets the tokenPath and expiresPath to undefined, then saves the model.
   schema.method(options.resetMethod, function (cb) {
     var model = this;
     model.set(options.tokenPath, undefined);
-    model.set(options.expiresKey, undefined);
+    model.set(options.expiresPath, undefined);
     // I decided to use the .save method instead of the update method because
     // I found I wanted to use this method in conjuction with updating other
     // properties before this.
-    //
-    // Also, with the save, it doesn't return a promise, so there's that. No
-    // support for promises on the save until 4.0
-    // https://github.com/LearnBoost/mongoose/issues/1431
-    var update = new Promise(function (resolve, reject) {
-      model.save(function (err) {
-        if (err) { return reject(err); }
-        resolve();
-      });
-    });
-
-    if (typeof cb === 'function') {
-      update.then(function (token) {
-        cb(null);
-      }, cb);
-    } else {
-      return update;
-    }
+    return saveAsync(model).nodeify(cb);
   });
 
-
+  // This is the getMethod static method.
+  //
+  // Gets a document by the given token (with additional optional query), as
+  // long as the token hasn't expired.
   schema.static(options.getByMethod, function (token, query, cb) {
     if (typeof query === 'function') {
       cb = query;
@@ -95,4 +73,17 @@ module.exports = function createdAt(schema, options) {
   });
 
 };
+
+// With the save, it doesn't return a promise, so there's that. No
+// support for promises on the save until 4.0
+// https://github.com/LearnBoost/mongoose/issues/1431
+function saveAsync(doc) {
+  return new Promise(function (resolve, reject) {
+    doc.save(function (err, doc) {
+      /* istanbul ignore if: This should handle errors just fine */
+      if (err) { return reject(err); }
+      resolve(doc);
+    });
+  });
+}
 

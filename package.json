@@ -14,8 +14,8 @@
   },
   "keywords": [
     "mongoose",
-    "password",
-    "hash"
+    "token",
+    "password-reset"
   ],
   "author": "ksmithut",
   "license": "MIT",
