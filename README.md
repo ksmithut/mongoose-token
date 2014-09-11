@@ -74,7 +74,7 @@ UserSchema.plugin(require('mongoose-token'), {
   resetMethod : 'resetToken',
   tokenLength : 20,
   expire      : 1 * 60 * 60 * 1000 // 1 hour
-);
+});
 ```
 
 # Options
