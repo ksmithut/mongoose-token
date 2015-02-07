@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise  = require('bluebird');
-var defaults = require('lodash.defaults');
+var defaults = require('defaults');
 var crypto   = Promise.promisifyAll(require('crypto'));
 
 module.exports = function createdAt(schema, options) {

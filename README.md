@@ -1,7 +1,11 @@
 # mongoose-token
 
+[![io.js compatibility](https://img.shields.io/badge/io.js-compatible-brightgreen.svg?style=flat)](https://iojs.org/)
 [![NPM version](http://img.shields.io/npm/v/mongoose-token.svg?style=flat)](https://www.npmjs.org/package/mongoose-token)
-[![Dependency Status](http://img.shields.io/gemnasium/ksmithut/mongoose-token.svg?style=flat)](https://gemnasium.com/ksmithut/mongoose-token)
+
+[![Dependency Status](http://img.shields.io/david/ksmithut/mongoose-token.svg?style=flat)](https://gemnasium.com/ksmithut/mongoose-token)
+[![Dev Dependency Status](http://img.shields.io/david/dev/ksmithut/mongoose-token.svg?style=flat)](https://gemnasium.com/ksmithut/mongoose-token)
+
 [![Code Climate](http://img.shields.io/codeclimate/github/ksmithut/mongoose-token.svg?style=flat)](https://codeclimate.com/github/ksmithut/mongoose-token)
 [![Build Status](http://img.shields.io/travis/ksmithut/mongoose-token.svg?style=flat)](https://travis-ci.org/ksmithut/mongoose-token)
 [![Coverage Status](http://img.shields.io/codeclimate/coverage/github/ksmithut/mongoose-token.svg?style=flat)](https://codeclimate.com/github/ksmithut/mongoose-token)
